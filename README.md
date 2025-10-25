@@ -122,9 +122,15 @@ This adds 12 realistic patient records with different symptoms and visit dates.
 
 ### Step 5: Run the Application
 
-**Windows:**
+**Windows (PowerShell):**
 
-```bash
+```powershell
+.\run.bat
+```
+
+**Windows (Command Prompt):**
+
+```cmd
 run.bat
 ```
 
