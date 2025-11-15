@@ -1,13 +1,10 @@
--- STEP BY STEP: Add Sample Data
--- Copy and run EACH section one at a time in MySQL Workbench
 
--- STEP 1: Select the database
 USE healthcamp_db;
 
--- STEP 2: Check if table exists
+
 SHOW TABLES;
 
--- STEP 3: Insert the data (run this complete INSERT statement)
+
 INSERT INTO patients (name, age, gender, phone, symptoms, diagnosis, treatment, visit_date) VALUES
 ('Rajesh Kumar', 45, 'Male', '9876543210', 'High fever, body ache, headache', 'Viral fever', 'Paracetamol 500mg (3x daily), Rest, Plenty of fluids', '2025-10-25'),
 ('Priya Sharma', 32, 'Female', '9876543211', 'Persistent cough, cold, sore throat', 'Upper respiratory infection', 'Cough syrup, Antibiotics, Warm water gargle', '2025-10-25'),
@@ -22,8 +19,8 @@ INSERT INTO patients (name, age, gender, phone, symptoms, diagnosis, treatment, 
 ('Arun Kumar', 19, 'Male', '9876543220', 'Fever, muscle pain, weakness', 'Dengue suspected', 'Referred to hospital, Blood test, Plenty of fluids', '2025-10-21'),
 ('Deepa Singh', 41, 'Female', '9876543221', 'Eye redness, itching, watering', 'Conjunctivitis', 'Eye drops, Clean with warm water, Avoid touching', '2025-10-21');
 
--- STEP 4: Verify the data was inserted
+
 SELECT COUNT(*) as total_records FROM patients;
 
--- STEP 5: View all the data
+
 SELECT * FROM patients ORDER BY visit_date DESC, id DESC;

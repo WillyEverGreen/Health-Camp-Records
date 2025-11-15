@@ -29,7 +29,7 @@ public class PatientRecord {
         this.visitDate = visitDate;
     }
     
-    // Getters and Setters
+
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
     

@@ -1,17 +1,14 @@
-# .gitignore for Health Camp Records
 
-# Compiled class files
 *.class
 target/
 *.jar
 *.war
 *.ear
 
-# Maven
 .mvn/
 !.mvn/wrapper/maven-wrapper.jar
 
-# IDE files
+
 .vscode/
 .idea/
 *.iml
@@ -21,32 +18,28 @@ target/
 .project
 .classpath
 
-# OS files
+
 .DS_Store
 Thumbs.db
 desktop.ini
 
-# Database credentials (IMPORTANT!)
-# Uncomment if you want to ignore DatabaseManager.java changes
-# src/healthcamp/database/DatabaseManager.java
 
-# Logs
+
 *.log
 
-# Temporary files
+
 *.tmp
 *.temp
 *.swp
 *.swo
 *~
 
-# Build outputs
 bin/
 out/
 build/
 dist/
 
-# Package files
+
 *.zip
 *.tar.gz
 *.rar

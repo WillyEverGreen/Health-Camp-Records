@@ -3,7 +3,7 @@ package healthcamp.database;
 import java.sql.*;
 
 public class DatabaseManager {
-    // ====== DATABASE CONFIGURATION ======
+ 
    
     private static final String URL = "jdbc:mysql://localhost:3306/healthcamp_db";
     private static final String USER = "root";
@@ -33,6 +33,18 @@ public class DatabaseManager {
             """;
             
             stmt.execute(createTable);
+            
+            String createUsersTable = """
+                CREATE TABLE IF NOT EXISTS users (
+                    id INT PRIMARY KEY AUTO_INCREMENT,
+                    username VARCHAR(50) NOT NULL UNIQUE,
+                    email VARCHAR(100) NOT NULL UNIQUE,
+                    password VARCHAR(255) NOT NULL,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            """;
+            
+            stmt.execute(createUsersTable);
             System.out.println("Database initialized successfully");
             
         } catch (SQLException e) {
