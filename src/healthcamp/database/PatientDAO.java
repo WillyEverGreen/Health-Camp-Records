@@ -8,23 +8,24 @@ import java.util.List;
 
 public class PatientDAO {
     
-    public boolean addPatient(PatientRecord patient) {
+    public boolean addPatient(PatientRecord patient, int userId) {
         String sql = """
-            INSERT INTO patients (name, age, gender, phone, symptoms, diagnosis, treatment, visit_date)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO patients (user_id, name, age, gender, phone, symptoms, diagnosis, treatment, visit_date)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         """;
         
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
-            pstmt.setString(1, patient.getName());
-            pstmt.setInt(2, patient.getAge());
-            pstmt.setString(3, patient.getGender());
-            pstmt.setString(4, patient.getPhone());
-            pstmt.setString(5, patient.getSymptoms());
-            pstmt.setString(6, patient.getDiagnosis());
-            pstmt.setString(7, patient.getTreatment());
-            pstmt.setDate(8, Date.valueOf(patient.getVisitDate()));
+            pstmt.setInt(1, userId);
+            pstmt.setString(2, patient.getName());
+            pstmt.setInt(3, patient.getAge());
+            pstmt.setString(4, patient.getGender());
+            pstmt.setString(5, patient.getPhone());
+            pstmt.setString(6, patient.getSymptoms());
+            pstmt.setString(7, patient.getDiagnosis());
+            pstmt.setString(8, patient.getTreatment());
+            pstmt.setDate(9, Date.valueOf(patient.getVisitDate()));
             
             pstmt.executeUpdate();
             return true;
@@ -35,13 +36,15 @@ public class PatientDAO {
         }
     }
     
-    public List<PatientRecord> getAllPatients() {
+    public List<PatientRecord> getAllPatients(int userId) {
         List<PatientRecord> patients = new ArrayList<>();
-        String sql = "SELECT * FROM patients ORDER BY visit_date DESC, id DESC";
+        String sql = "SELECT * FROM patients WHERE user_id = ? ORDER BY visit_date DESC, id DESC";
         
         try (Connection conn = DatabaseManager.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setInt(1, userId);
+            ResultSet rs = pstmt.executeQuery();
             
             while (rs.next()) {
                 patients.add(extractPatientFromResultSet(rs));
@@ -54,11 +57,11 @@ public class PatientDAO {
         return patients;
     }
     
-    public List<PatientRecord> searchPatients(String keyword) {
+    public List<PatientRecord> searchPatients(String keyword, int userId) {
         List<PatientRecord> patients = new ArrayList<>();
         String sql = """
             SELECT * FROM patients 
-            WHERE name LIKE ? OR phone LIKE ? OR symptoms LIKE ? OR diagnosis LIKE ?
+            WHERE user_id = ? AND (name LIKE ? OR phone LIKE ? OR symptoms LIKE ? OR diagnosis LIKE ?)
             ORDER BY visit_date DESC
         """;
         
@@ -66,10 +69,11 @@ public class PatientDAO {
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
             String searchTerm = "%" + keyword + "%";
-            pstmt.setString(1, searchTerm);
+            pstmt.setInt(1, userId);
             pstmt.setString(2, searchTerm);
             pstmt.setString(3, searchTerm);
             pstmt.setString(4, searchTerm);
+            pstmt.setString(5, searchTerm);
             
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
@@ -128,15 +132,17 @@ public class PatientDAO {
         }
     }
     
-    public int getTodayPatientCount() {
-        String sql = "SELECT COUNT(*) FROM patients WHERE visit_date = CURDATE()";
+    public int getTodayPatientCount(int userId) {
+        String sql = "SELECT COUNT(*) FROM patients WHERE user_id = ? AND visit_date = CURDATE()";
         
         try (Connection conn = DatabaseManager.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
-            if (rs.next()) {
-                return rs.getInt(1);
+            pstmt.setInt(1, userId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
             }
             
         } catch (SQLException e) {

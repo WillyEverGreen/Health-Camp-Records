@@ -22,6 +22,7 @@ public class Main extends Application {
     private TableView<PatientRecord> table = new TableView<>();
     private TextField searchField = new TextField();
     private Stage primaryStage;
+    private int currentUserId;
     
     @Override
     public void start(Stage stage) {
@@ -34,7 +35,10 @@ public class Main extends Application {
     }
     
     private void showLoginScreen() {
-        LoginSignupView loginView = new LoginSignupView(() -> showMainApp());
+        LoginSignupView loginView = new LoginSignupView(user -> {
+            currentUserId = user.getId();
+            showMainApp();
+        });
         Scene loginScene = new Scene(loginView, 500, 550);
         primaryStage.setScene(loginScene);
         primaryStage.show();
@@ -124,6 +128,8 @@ public class Main extends Application {
     }
     
     private void setupTable() {
+        table.getColumns().clear();
+        
         TableColumn<PatientRecord, Integer> idCol = new TableColumn<>("ID");
         idCol.setCellValueFactory(new PropertyValueFactory<>("id"));
         idCol.setPrefWidth(50);
@@ -234,7 +240,7 @@ public class Main extends Application {
                     datePicker.getValue()
                 );
                 
-                if (patientDAO.addPatient(patient)) {
+                if (patientDAO.addPatient(patient, currentUserId)) {
                     showAlert("Success", "Patient record added successfully!", Alert.AlertType.INFORMATION);
                     clearForm(nameField, ageField, genderBox, phoneField, symptomsArea, diagnosisField, treatmentArea);
                     loadAllPatients();
@@ -322,19 +328,19 @@ public class Main extends Application {
     
     private void loadAllPatients() {
         table.getItems().clear();
-        table.getItems().addAll(patientDAO.getAllPatients());
+        table.getItems().addAll(patientDAO.getAllPatients(currentUserId));
     }
     
     private void searchPatients() {
         String keyword = searchField.getText().trim();
         if (!keyword.isEmpty()) {
             table.getItems().clear();
-            table.getItems().addAll(patientDAO.searchPatients(keyword));
+            table.getItems().addAll(patientDAO.searchPatients(keyword, currentUserId));
         }
     }
     
     private void showTodayReport() {
-        int count = patientDAO.getTodayPatientCount();
+        int count = patientDAO.getTodayPatientCount(currentUserId);
         showAlert("Today's Report", 
             "Total patients seen today: " + count, 
             Alert.AlertType.INFORMATION);

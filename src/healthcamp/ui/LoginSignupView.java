@@ -7,13 +7,14 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import java.util.function.Consumer;
 
 public class LoginSignupView extends VBox {
     
     private UserDAO userDAO = new UserDAO();
-    private Runnable onLoginSuccess;
+    private Consumer<User> onLoginSuccess;
     
-    public LoginSignupView(Runnable onLoginSuccess) {
+    public LoginSignupView(Consumer<User> onLoginSuccess) {
         this.onLoginSuccess = onLoginSuccess;
         setupUI();
     }
@@ -93,7 +94,7 @@ public class LoginSignupView extends VBox {
             messageLabel.setStyle("-fx-text-fill: green;");
             
             if (onLoginSuccess != null) {
-                onLoginSuccess.run();
+                onLoginSuccess.accept(user);
             }
         });
         
